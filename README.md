@@ -1,4 +1,5 @@
-The feeble attempt to aggregate feeds in the bookmarks.
+The feeble attempt to aggregate feeds in the bookmarks 
+using firefox [WebExtensions](https://developer.mozilla.org/en-US/Add-ons/WebExtensions)
 
 
 # Development
