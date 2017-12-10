@@ -1,0 +1,33 @@
+{
+  "manifest_version": 2,
+  "name": "RSS-Aggregator",
+  "version": "0.0.1",
+  "description": "Aggregate RSS feeds from the bookmarks and display them on one page",
+  "author": "LoveIsGrief",
+  "applications": {
+    "gecko": {
+      "id": "@rss-aggregator"
+    }
+  },
+  "icons": {
+    "64": "data/icon-64.png"
+  },
+  "browser_action": {
+    "browser_style": true,
+    "default_icon": "data/icon-64.png",
+    "default_popup": "popup/panel.html",
+    "default_title": "Save link for later"
+  },
+  "background": {
+    "scripts": [
+      "node_modules/rss-parser/dist/rss-parser.min.js",
+      "src/index.js"
+    ]
+  },
+  "permissions": [
+    "<all_urls>",
+    "bookmarks",
+    "storage",
+    "tabs"
+  ]
+}

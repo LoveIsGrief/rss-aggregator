@@ -1,0 +1,17 @@
+{
+  "name": "rss-aggregator",
+  "version": "0.0.1",
+  "description": "Aggregate RSS feeds from the bookmarks and display them on one page",
+  "main": "index.js",
+  "scripts": {
+    "run": "node_modules/.bin/web-ext run"
+  },
+  "author": "LoveIsGrief",
+  "license": "ISC",
+  "dependencies": {
+    "rss-parser": "^2.11.0"
+  },
+  "devDependencies": {
+    "web-ext": "^2.2.2"
+  }
+}
