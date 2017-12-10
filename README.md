@@ -4,7 +4,7 @@ using firefox [WebExtensions](https://developer.mozilla.org/en-US/Add-ons/WebExt
 
 # Development
 
-** Requirements**
+**Requirements**
 
  - [npm and nodejs](https://nodejs.org/en/)
  
