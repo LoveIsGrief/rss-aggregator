@@ -15,8 +15,7 @@
   "browser_action": {
     "browser_style": true,
     "default_icon": "data/icon-64.png",
-    "default_popup": "popup/panel.html",
-    "default_title": "Save link for later"
+    "default_title": "RSS Aggregator"
   },
   "background": {
     "scripts": [
@@ -24,6 +23,7 @@
       "src/index.js"
     ]
   },
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self';",
   "permissions": [
     "<all_urls>",
     "bookmarks",
