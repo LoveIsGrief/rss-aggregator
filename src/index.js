@@ -101,14 +101,14 @@ function parseAllRSS(urls) {
 }
 
 /**
- * Key is time
+ * Key is datetime
  * Value is an url to {@see FeedItem} pair
  *
  * @typedef {Object.<Number, Object.<string, FeedItem> >} PrimaryAggregation
  */
 
 /**
- * Get the time of each item in each feed and flattens successes
+ * Get the datetime of each item in each feed and flattens successes
  *
  * @param {Successes} successes
  * @param {BestEffortError[]} errors
@@ -134,7 +134,8 @@ function aggregateNewItems(successes, errors) {
 }
 
 /**
- * Key: time
+ * TODO Make the value an array sorted by time so that the display won't have to resort
+ * Key: datetime
  * @typedef {Object.<Number, Object.<UrlString, DbInstances> >} DbAggregation
  */
 
@@ -150,7 +151,8 @@ function mergeOldWithNewItems(old, _new) {
         for (var itemUrl in newItemInstances) {
             let newItem = newItemInstances[itemUrl];
             let oldInstance = oldItemInstances[itemUrl] || {};
-            oldInstance.item = newItem
+            oldInstance.item = newItem;
+            oldInstance.datetime = time;
             oldItemInstances[itemUrl] = oldInstance;
         }
         old[time] = oldItemInstances;
@@ -165,10 +167,15 @@ function saveToDB(newResults) {
     browser.storage.sync.get(DB_KEY).then((aggregatedRSS) => {
         let toSave = aggregatedRSS[DB_KEY] || {};
         mergeOldWithNewItems(toSave, newResults);
-
         browser.storage.sync.set({[DB_KEY]: toSave});
     });
 }
+
+browser.browserAction.onClicked.addListener(() => {
+    browser.tabs.create({
+        url: browser.extension.getURL("src/aggregator.html")
+    })
+})
 
 parseAllRSS([
     "https://www.reddit.com/.rss",
