@@ -1,5 +1,5 @@
 <div
-    class="panel panel-default"
+    class="panel panel-default item-detail"
 >
     <div class="panel-heading">
         <h3 class="panel-title">{{ $ctrl.datetime | date : 'medium'}}</h3>
@@ -13,13 +13,25 @@
         <div class="list-group">
 
             <!--ng-mouseover="aggregator.activeHover = datetime + $index"-->
-            <a
+            <li
                 ng-repeat="(url, dbInstance) in $ctrl.instances"
-                href="{{url}}" target="_blank"
                 class="list-group-item"
             >
-                {{ dbInstance.item.title}}
-            </a>
+                <a
+                    href="{{url}}" target="_blank"
+                    ng-click="$ctrl.toggleRead(dbInstance, true)"
+                >
+                    {{ dbInstance.item.title}}
+                </a>
+                <span
+                    ng-class="{'badge': !dbInstance.read, 'badge read': dbInstance.read}"
+                    ng-click="$ctrl.toggleRead(dbInstance)"
+                >
+                    <span class="glyphicon glyphicon-ok"
+                          aria-hidden="true">
+                    </span>
+                </span>
+            </li>
         </div>
     </div>
 </div>
