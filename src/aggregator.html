@@ -2,7 +2,8 @@
     <script src="../node_modules/angular/angular.min.js"></script>
     <script src="../node_modules/angular-ui-bootstrap/dist/ui-bootstrap.js"></script>
     <script src="../node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js"></script>
-    <script src="aggregator.js"></script>
+    <script src="angular/aggregator.js"></script>
+    <script src="angular/components/itemDetail.js"></script>
 
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="css/bootstrap.min.css"
@@ -19,30 +20,10 @@
 </head>
 <body ng-app="aggregatorApp">
 <div ng-controller="AggregatorController as aggregator">
-    <div
-            class="panel panel-default"
+    <item-detail
             ng-repeat="(datetime, dbInstances) in aggregator.items"
-    >
-        <div class="panel-heading">
-            <h3 class="panel-title">{{ datetime | date : 'medium'}}</h3>
-        </div>
-
-        <div
-                ng-class-even="'panel-body bg-info'"
-                ng-class-odd="'panel-body bg-success'"
-        >
-            <div class="list-group">
-
-                <a
-                        href="{{url}}" target="_blank"
-                        ng-repeat="(url, dbInstance) in dbInstances"
-                        ng-mouseover="aggregator.activeHover = datetime + $index"
-                        class="list-group-item"
-                >
-                    {{ dbInstance.item.title}}
-                </a>
-            </div>
-        </div>
-    </div>
+            datetime="datetime"
+            instances="dbInstances"
+    ></item-detail>
 </div>
 </body>

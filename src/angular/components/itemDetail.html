@@ -1,0 +1,25 @@
+<div
+    class="panel panel-default"
+>
+    <div class="panel-heading">
+        <h3 class="panel-title">{{ $ctrl.datetime | date : 'medium'}}</h3>
+    </div>
+
+    <div
+        ng-class-even="'panel-body bg-info'"
+        ng-class-odd="'panel-body bg-success'"
+
+    >
+        <div class="list-group">
+
+            <!--ng-mouseover="aggregator.activeHover = datetime + $index"-->
+            <a
+                ng-repeat="(url, dbInstance) in $ctrl.instances"
+                href="{{url}}" target="_blank"
+                class="list-group-item"
+            >
+                {{ dbInstance.item.title}}
+            </a>
+        </div>
+    </div>
+</div>
