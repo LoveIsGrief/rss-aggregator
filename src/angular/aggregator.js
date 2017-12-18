@@ -14,5 +14,10 @@ angular.module("aggregatorApp", [
                 console.log("applied", this.items);
             });
         })
+
+        this.toggleRead = (instance, read) => {
+            instance.read = read !== undefined ? read : !instance.read;
+            browser.storage.sync.set({[DB_KEY]: this.items})
+        }
     }
 ])

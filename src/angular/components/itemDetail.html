@@ -19,13 +19,13 @@
             >
                 <a
                     href="{{url}}" target="_blank"
-                    ng-click="$ctrl.toggleRead(dbInstance, true)"
+                    ng-click="$ctrl.onToggleRead({instance: dbInstance, read: true})"
                 >
                     {{ dbInstance.item.title}}
                 </a>
                 <span
                     ng-class="{'badge': !dbInstance.read, 'badge read': dbInstance.read}"
-                    ng-click="$ctrl.toggleRead(dbInstance)"
+                    ng-click="$ctrl.onToggleRead({instance: dbInstance})"
                 >
                     <span class="glyphicon glyphicon-ok"
                           aria-hidden="true">

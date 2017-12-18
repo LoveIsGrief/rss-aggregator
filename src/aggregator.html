@@ -24,6 +24,7 @@
             ng-repeat="(datetime, dbInstances) in aggregator.items"
             datetime="datetime"
             instances="dbInstances"
+            on-toggle-read="aggregator.toggleRead(instance, read)"
     ></item-detail>
 </div>
 </body>
