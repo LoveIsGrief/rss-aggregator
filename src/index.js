@@ -31,11 +31,6 @@ const DB_KEY = "aggregated-rss";
  */
 
 /**
- * @typedef {Object.<UrlString, DbItemInstance>} DbInstances
- */
-
-
-/**
  * Promisify RSSParser.parseURL
  *
  * @param url
@@ -101,72 +96,52 @@ function parseAllRSS(urls) {
 }
 
 /**
- * Key is datetime
- * Value is an url to {@see FeedItem} pair
- *
- * @typedef {Object.<Number, Object.<string, FeedItem> >} PrimaryAggregation
+ * @typedef {Object} DbFeedItem
+ * @property {Number} datetime - unix time of when the
+ * @property {String} feedUrl - where this item was recovered from
+ * @property {Boolean} read - whether the item was read by the user
  */
 
 /**
- * Get the datetime of each item in each feed and flattens successes
- *
- * @param {Successes} successes
- * @param {BestEffortError[]} errors
- * @returns {PrimaryAggregation}
+ * @typedef {Object.<UrlString, DbFeedItem>} DbAggregation
  */
-function aggregateNewItems(successes, errors) {
-    return Object.keys(successes).reduce((acc, rssUrl) => {
-        let entries = successes[rssUrl].feed.entries;
-        for (let item of entries) {
+
+/**
+ * @param {DbAggregation} old
+ * @param {Successes} successes
+ */
+function mergeOldWithNewItems(old, successes) {
+    console.log(successes);
+    for (let rssUrl in successes) {
+
+        // Add only truly new items
+        // No need to update the old ones (hence the filter)
+        for (let item of successes[rssUrl].feed.entries.filter( item => !old[item.link])) {
             let time = Date.parse(item.isoDate || item.pubDate);
             if (isNaN(time)) {
                 console.warn(`Couldn't parse time of item in the feed ${rssUrl}`, item)
                 continue
             }
-            var itemsAtTime = acc[time] || {};
-            // We add a dict of the item in order to be able to add more properties
-            // e.g when it was read, if it's faved, etc.
-            itemsAtTime[item.link] = item
-            acc[time] = itemsAtTime
+            old[item.link] = {
+                title: item.title,
+                url: item.link,
+                description: item.description,
+                datetime: time,
+                feedUrl: rssUrl,
+                read: false,
+            }
         }
-        return acc
-    }, {})
-}
-
-/**
- * TODO Make the value an array sorted by time so that the display won't have to resort
- * Key: datetime
- * @typedef {Object.<Number, Object.<UrlString, DbInstances> >} DbAggregation
- */
-
-/**
- * @param {DbAggregation} old
- * @param {PrimaryAggregation} _new
- */
-function mergeOldWithNewItems(old, _new) {
-    for (let time in _new) {
-        let newItemInstances = _new[time];
-        let oldItemInstances = old[time] || {};
-
-        for (var itemUrl in newItemInstances) {
-            let newItem = newItemInstances[itemUrl];
-            let oldInstance = oldItemInstances[itemUrl] || {};
-            oldInstance.item = newItem;
-            oldInstance.datetime = time;
-            oldItemInstances[itemUrl] = oldInstance;
-        }
-        old[time] = oldItemInstances;
     }
 }
 
 /**
  * Updates the DB with parsed items
- * @param {PrimaryAggregation} newResults
+ * @param {Successes} successes
  */
-function saveToDB(newResults) {
+function saveToDB(successes) {
     browser.storage.sync.get(DB_KEY).then((aggregatedRSS) => {
         let toSave = aggregatedRSS[DB_KEY] || {};
-        mergeOldWithNewItems(toSave, newResults);
+        mergeOldWithNewItems(toSave, successes);
         browser.storage.sync.set({[DB_KEY]: toSave});
     });
 }
@@ -182,6 +157,4 @@ parseAllRSS([
     "http://science.sciencemag.org/rss/twis.xml",
     "http://rss.cnn.com/rss/edition.rss",
     "http://feeds.bbci.co.uk/news/world/latin_america/rss.xml"
-])
-    .then(aggregateNewItems)
-    .then(saveToDB)
+]).then(saveToDB)

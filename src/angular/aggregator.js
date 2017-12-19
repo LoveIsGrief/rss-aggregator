@@ -6,18 +6,23 @@ angular.module("aggregatorApp", [
 ]).controller("AggregatorController", [
     "$scope",
     function ($scope) {
-        this.items = {};
+        this.dbItems = {};
+        this.items = [];
 
         browser.storage.sync.get(DB_KEY).then((aggregated) => {
             $scope.$apply(() => {
-                Object.assign(this.items, aggregated[DB_KEY] || {});
-                console.log("applied", this.items);
+                this.dbItems = aggregated[DB_KEY] || {};
+                this.items = [];
+                for (var url in this.dbItems) {
+                    this.items.push(this.dbItems[url]);
+                }
+                console.log(this.items)
             });
         })
 
-        this.toggleRead = (instance, read) => {
-            instance.read = read !== undefined ? read : !instance.read;
-            browser.storage.sync.set({[DB_KEY]: this.items})
+        this.toggleRead = (item, read) => {
+            item.read = read !== undefined ? read : !item.read;
+            browser.storage.sync.set({[DB_KEY]: this.dbItems})
         }
     }
 ])

@@ -1,7 +1,7 @@
-.item-detail .list-group-item .badge:hover{
+.item-detail .panel-body .badge:hover{
     cursor: pointer;
 }
 
-.item-detail .list-group-item .badge.read{
+.item-detail .panel-body .badge.read{
     background-color: #178117;
 }

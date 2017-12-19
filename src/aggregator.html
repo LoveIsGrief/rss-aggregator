@@ -18,13 +18,14 @@
           href="../node_modules/angular-ui-bootstrap/dist/ui-bootstrap-csp.css">
     <link rel="stylesheet" href="css/aggregator.css">
 </head>
-<body ng-app="aggregatorApp">
-<div ng-controller="AggregatorController as aggregator">
+<body ng-app="aggregatorApp" class="container-fluid">
+<div ng-controller="AggregatorController as aggregator" class="row">
+            <!--class="col-xs-1 col-sm-2 col-md-4 col-lg-8"-->
     <item-detail
-            ng-repeat="(datetime, dbInstances) in aggregator.items"
-            datetime="datetime"
-            instances="dbInstances"
-            on-toggle-read="aggregator.toggleRead(instance, read)"
+            class="col-md-4"
+            ng-repeat="item in aggregator.items | orderBy: 'datetime' track by item.url"
+            item="item"
+            on-toggle-read="aggregator.toggleRead(item, read)"
     ></item-detail>
 </div>
 </body>

@@ -1,8 +1,27 @@
 <div
     class="panel panel-default item-detail"
 >
-    <div class="panel-heading">
-        <h3 class="panel-title">{{ $ctrl.datetime | date : 'medium'}}</h3>
+    <div
+        ng-class-even="'panel-body bg-info'"
+        ng-class-odd="'panel-body bg-success'"
+    >
+        <a
+            href="{{$ctrl.item.url}}" target="_blank"
+            ng-click="$ctrl.onToggleRead({item: $ctrl.item, read: true})"
+        >
+            {{ $ctrl.item.datetime | date : 'medium'}}
+            {{ $ctrl.item.title }}
+        </a>
+        <span
+            ng-class="{'badge': !$ctrl.item.read, 'badge read': $ctrl.item.read}"
+        >
+            <span
+                class="glyphicon glyphicon-ok"
+                aria-hidden="true"
+                ng-click="$ctrl.onToggleRead({item: $ctrl.item})"
+            >
+            </span>
+        </span>
     </div>
 
     <div
@@ -10,28 +29,5 @@
         ng-class-odd="'panel-body bg-success'"
 
     >
-        <div class="list-group">
-
-            <!--ng-mouseover="aggregator.activeHover = datetime + $index"-->
-            <li
-                ng-repeat="(url, dbInstance) in $ctrl.instances"
-                class="list-group-item"
-            >
-                <a
-                    href="{{url}}" target="_blank"
-                    ng-click="$ctrl.onToggleRead({instance: dbInstance, read: true})"
-                >
-                    {{ dbInstance.item.title}}
-                </a>
-                <span
-                    ng-class="{'badge': !dbInstance.read, 'badge read': dbInstance.read}"
-                    ng-click="$ctrl.onToggleRead({instance: dbInstance})"
-                >
-                    <span class="glyphicon glyphicon-ok"
-                          aria-hidden="true">
-                    </span>
-                </span>
-            </li>
-        </div>
     </div>
 </div>
