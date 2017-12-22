@@ -5,3 +5,7 @@
 .item-detail .panel-body .badge.read{
     background-color: #178117;
 }
+
+[data-hide="true"] {
+    display: none;
+}

@@ -17,15 +17,32 @@
     <link rel="stylesheet"
           href="../node_modules/angular-ui-bootstrap/dist/ui-bootstrap-csp.css">
     <link rel="stylesheet" href="css/aggregator.css">
+    <title>Rss Aggregator</title>
 </head>
-<body ng-app="aggregatorApp" class="container-fluid">
-<div ng-controller="AggregatorController as aggregator" class="row">
-            <!--class="col-xs-1 col-sm-2 col-md-4 col-lg-8"-->
+<body ng-app="aggregatorApp">
+<div ng-controller="AggregatorController as aggregator">
+    <form>
+        <div class="checkbox">
+            <label>
+                <input
+                    type="checkbox" id="hideRead"
+                    ng-checked="aggregator.hideRead"
+                    ng-click="aggregator.toggleHideRead()"
+                >
+                Hide read
+            </label>
+        </div>
+    </form>
     <item-detail
-            class="col-md-4"
-            ng-repeat="item in aggregator.items | orderBy: 'datetime' track by item.url"
-            item="item"
-            on-toggle-read="aggregator.toggleRead(item, read)"
+        ng-repeat="item in aggregator.items
+        | filter:aggregator.hideItemFilter
+        | orderBy: 'datetime'
+        track by item.url"
+        item="item"
+        on-toggle-read="aggregator.toggleRead(item, read)"
+        data-hide="{{item.read && aggregator.hideRead}}"
+        ng-class-even="'bg-info'"
+        ng-class-odd="'bg-success'"
     ></item-detail>
 </div>
 </body>

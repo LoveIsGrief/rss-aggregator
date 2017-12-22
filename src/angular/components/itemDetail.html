@@ -1,15 +1,11 @@
 <div
     class="panel panel-default item-detail"
 >
-    <div
-        ng-class-even="'panel-body bg-info'"
-        ng-class-odd="'panel-body bg-success'"
-    >
+    <div class="panel-body">
         <a
             href="{{$ctrl.item.url}}" target="_blank"
             ng-click="$ctrl.onToggleRead({item: $ctrl.item, read: true})"
         >
-            {{ $ctrl.item.datetime | date : 'medium'}}
             {{ $ctrl.item.title }}
         </a>
         <span
@@ -23,11 +19,5 @@
             </span>
         </span>
     </div>
-
-    <div
-        ng-class-even="'panel-body bg-info'"
-        ng-class-odd="'panel-body bg-success'"
-
-    >
-    </div>
+    <div class="panel-footer">{{ $ctrl.item.datetime | date : 'medium'}}</div>
 </div>

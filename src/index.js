@@ -1,4 +1,5 @@
 const DB_KEY = "aggregated-rss";
+const AGGREGATE_INTERVAL = 60000;
 
 /**
  * A single item in the rss feed.
@@ -22,13 +23,6 @@ const DB_KEY = "aggregated-rss";
 /**
  * @typedef {String} UrlString
  */
-/**
- * The import item that will be used in the UI
- * @typedef {Object} DbItemInstance
- *
- * @property {Date} readAt
- * @property {FeedItem} item
- */
 
 /**
  * Promisify RSSParser.parseURL
@@ -50,9 +44,9 @@ function parseRSS(url) {
 }
 
 /**
- * A URL to RSS JSON pairing
- *
  * @typedef {Object.<String, RssJson>} Successes
+ *
+ * A URL to RSS JSON pairing
  */
 
 /**
@@ -74,6 +68,10 @@ function parseAllRSS(urls) {
         let leftToProcess = urls.length;
         let successes = {};
         let errors = [];
+        if(urls.length < 1){
+            accept(successes, errors);
+            return
+        }
         Object.keys(urls.reduce((acc, url) => {
             acc[url] = null;
             return acc
@@ -111,12 +109,11 @@ function parseAllRSS(urls) {
  * @param {Successes} successes
  */
 function mergeOldWithNewItems(old, successes) {
-    console.log(successes);
     for (let rssUrl in successes) {
 
         // Add only truly new items
         // No need to update the old ones (hence the filter)
-        for (let item of successes[rssUrl].feed.entries.filter( item => !old[item.link])) {
+        for (let item of successes[rssUrl].feed.entries.filter(item => !old[item.link])) {
             let time = Date.parse(item.isoDate || item.pubDate);
             if (isNaN(time)) {
                 console.warn(`Couldn't parse time of item in the feed ${rssUrl}`, item)
@@ -152,9 +149,20 @@ browser.browserAction.onClicked.addListener(() => {
     })
 })
 
-parseAllRSS([
-    "https://www.reddit.com/.rss",
-    "http://science.sciencemag.org/rss/twis.xml",
-    "http://rss.cnn.com/rss/edition.rss",
-    "http://feeds.bbci.co.uk/news/world/latin_america/rss.xml"
-]).then(saveToDB)
+function aggregateFeeds() {
+    let promise = null;
+    browser.bookmarks.search("rss").then((results) => {
+        let nonFolders = results.filter(bookmark => bookmark.type === "bookmark");
+        let urls = nonFolders.map(bookmark => bookmark.url);
+        if (!promise) {
+            promise = parseAllRSS(urls)
+                .then(saveToDB)
+                .then(() => {
+                    setTimeout(aggregateFeeds, AGGREGATE_INTERVAL)
+                })
+        }
+    });
+}
+
+aggregateFeeds();
+
