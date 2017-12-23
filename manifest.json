@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "RSS-Aggregator",
-  "version": "0.0.1",
+  "version": "0.0.2alpha",
   "description": "Aggregate RSS feeds from the bookmarks and display them on one page",
   "author": "LoveIsGrief",
   "applications": {
@@ -15,15 +15,15 @@
   "browser_action": {
     "browser_style": true,
     "default_icon": "data/icon-64.png",
-    "default_popup": "popup/panel.html",
-    "default_title": "Save link for later"
+    "default_title": "RSS Aggregator"
   },
   "background": {
     "scripts": [
-      "node_modules/rss-parser/dist/rss-parser.min.js",
+      "libs/js/rss-parser.min.js",
       "src/index.js"
     ]
   },
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self';",
   "permissions": [
     "<all_urls>",
     "bookmarks",

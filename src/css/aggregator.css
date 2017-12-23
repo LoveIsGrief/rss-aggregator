@@ -1,0 +1,43 @@
+:root {
+    --icon-width: 200px;
+}
+
+.item-detail {
+    position: relative;
+}
+
+.item-detail .panel-icon {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+
+    width: var(--icon-width);
+
+    border-bottom-left-radius: 4px;
+    border-top-left-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+.item-detail .panel-icon + .panel-body {
+    margin-left: var(--icon-width);
+}
+
+.item-detail .panel-icon + .panel-body + .panel-footer {
+    margin-left: var(--icon-width);
+}
+
+.item-detail .panel-body .badge:hover {
+    cursor: pointer;
+}
+
+.item-detail .panel-body .badge.read {
+    background-color: #178117;
+}
+
+[data-hide="true"] {
+    display: none;
+}
