@@ -19,7 +19,7 @@
   },
   "background": {
     "scripts": [
-      "node_modules/rss-parser/dist/rss-parser.min.js",
+      "libs/js/rss-parser.min.js",
       "src/index.js"
     ]
   },

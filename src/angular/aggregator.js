@@ -2,7 +2,6 @@ const DB_KEY = "aggregated-rss";
 
 
 angular.module("aggregatorApp", [
-    "ui.bootstrap"
 ]).controller("AggregatorController", [
     "$scope",
     function ($scope) {

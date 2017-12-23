@@ -10,7 +10,6 @@
   "license": "ISC",
   "dependencies": {
     "angular": "^1.6.7",
-    "angular-ui-bootstrap": "^2.5.6",
     "rss-parser": "^2.11.0"
   },
   "devDependencies": {
