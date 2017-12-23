@@ -1,5 +1,12 @@
 const DB_KEY = "aggregated-rss";
 const AGGREGATE_INTERVAL = 60000;
+const CHECK_INTERVAL = 5000;
+
+/**
+ * Checked URLs with when they were checked in unix timestamp milliseconds
+ * @type {Object.<String, Number>}
+ */
+let toCheck = {};
 
 /**
  * A single item in the rss feed.
@@ -68,7 +75,7 @@ function parseAllRSS(urls) {
         let leftToProcess = urls.length;
         let successes = {};
         let errors = [];
-        if(urls.length < 1){
+        if (urls.length < 1) {
             accept(successes, errors);
             return
         }
@@ -154,11 +161,23 @@ function aggregateFeeds() {
     browser.bookmarks.search("rss").then((results) => {
         let nonFolders = results.filter(bookmark => bookmark.type === "bookmark");
         let urls = nonFolders.map(bookmark => bookmark.url);
+
+        let now = Date.now();
+        let toAggregate = urls.filter((url) => {
+            let isOld = url in toCheck;
+            let seenNeedsToBeChecked = isOld && (now - toCheck[url]) > AGGREGATE_INTERVAL;
+            let ret = !isOld || seenNeedsToBeChecked;
+            if (ret) {
+                toCheck[url] = now;
+            }
+            return ret
+        });
+
         if (!promise) {
-            promise = parseAllRSS(urls)
+            promise = parseAllRSS(toAggregate)
                 .then(saveToDB)
                 .then(() => {
-                    setTimeout(aggregateFeeds, AGGREGATE_INTERVAL)
+                    setTimeout(aggregateFeeds, CHECK_INTERVAL)
                 })
         }
     });

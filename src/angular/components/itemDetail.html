@@ -1,6 +1,10 @@
 <div
     class="panel panel-default item-detail"
 >
+    <div class="panel-icon">
+        {{ $ctrl.getHost($ctrl.item.url)}}
+    </div>
+
     <div class="panel-body">
         <a
             href="{{$ctrl.item.url}}" target="_blank"
