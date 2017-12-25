@@ -23,16 +23,26 @@
                 <input
                     type="checkbox" id="hideRead"
                     ng-checked="aggregator.hideRead"
-                    ng-click="aggregator.toggleHideRead()"
+                    ng-model="aggregator.hideRead"
                 >
                 Hide read
+            </label>
+        </div>
+        <div class="checkbox">
+            <label>
+                <input
+                    type="checkbox" id="reverseSort"
+                    ng-checked="aggregator.newestToOldest"
+                    ng-model="aggregator.newestToOldest"
+                >
+                Newest to oldest
             </label>
         </div>
     </form>
     <item-detail
         ng-repeat="item in aggregator.items
         | filter:aggregator.hideItemFilter
-        | orderBy: 'datetime'
+        | orderBy: 'datetime' : aggregator.newestToOldest
         track by item.url"
         item="item"
         on-toggle-read="aggregator.toggleRead(item, read)"
