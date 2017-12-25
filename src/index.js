@@ -138,15 +138,33 @@ function mergeOldWithNewItems(old, successes) {
     }
 }
 
+let savingToDB = null;
+
 /**
  * Updates the DB with parsed items
  * @param {Successes} successes
  */
 function saveToDB(successes) {
+    if (savingToDB) {
+        return
+    }
     browser.storage.sync.get(DB_KEY).then((aggregatedRSS) => {
         let toSave = aggregatedRSS[DB_KEY] || {};
+        let countOld = Object.keys(toSave).length;
         mergeOldWithNewItems(toSave, successes);
-        browser.storage.sync.set({[DB_KEY]: toSave});
+        let countNew = Object.keys(toSave).length;
+        let diff = countNew - countOld;
+        savingToDB = browser.storage.sync.set({[DB_KEY]: toSave}).then(() => {
+            // For some reason this is called twice? on one set? bug or do I just program like shit?
+            if (diff > 0) {
+                browser.notifications.create({
+                    title: "New feed items",
+                    type: "basic",
+                    message: `${diff} new feed item(s)`
+                })
+            }
+            savingToDB = null;
+        });
     });
 }
 
