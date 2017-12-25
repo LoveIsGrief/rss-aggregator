@@ -4,7 +4,8 @@
   "description": "Aggregate RSS feeds from the bookmarks and display them on one page",
   "main": "index.js",
   "scripts": {
-    "run": "node_modules/.bin/web-ext run"
+    "run": "node_modules/.bin/web-ext run",
+    "build": "node_modules/.bin/web-ext build --overwrite-dest --ignore-files node_modules .gitignore package.json package-lock.json"
   },
   "author": "LoveIsGrief",
   "license": "ISC",
