@@ -1,19 +1,28 @@
 const DB_KEY = "aggregated-rss";
 
 
-angular.module("aggregatorApp", [
-]).controller("AggregatorController", [
+angular.module("aggregatorApp", []).controller("AggregatorController", [
     "$scope",
     function ($scope) {
         this.dbItems = {};
         this.items = [];
         this.hideRead = false;
+        this.newestToOldest = false;
 
-        browser.storage.sync.get("hideRead").then(({hideRead}) => {
-            $scope.$apply(() => {
-                this.hideRead = hideRead
+        ["hideRead", "newestToOldest"].forEach((booleanOption) => {
+            browser.storage.sync.get(booleanOption).then((res) => {
+                let booleanValue = res[booleanOption];
+                $scope.$apply(() => {
+                    this[booleanOption] = booleanValue;
+                })
+                $scope.$watch(() => this[booleanOption], () => {
+                    browser.storage.sync.set({
+                        [booleanOption]: this[booleanOption]
+                    })
+                })
             })
-        })
+        });
+
 
         setInterval(() => {
             browser.storage.sync.get(DB_KEY).then((aggregated) => {
@@ -30,13 +39,6 @@ angular.module("aggregatorApp", [
         this.toggleRead = (item, read) => {
             item.read = read !== undefined ? read : !item.read;
             browser.storage.sync.set({[DB_KEY]: this.dbItems})
-        }
-
-        this.toggleHideRead = () => {
-            this.hideRead = !this.hideRead;
-            browser.storage.sync.set({
-                hideRead: this.hideRead
-            })
         }
 
         /**
