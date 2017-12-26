@@ -2,6 +2,23 @@
     --icon-width: 200px;
 }
 
+.aggregator-controller {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.aggregator-controller > form {
+    order: -1;
+}
+
+.aggregator-controller .main {
+    flex-grow: 2;
+    overflow-y: scroll;
+}
+
 .item-detail {
     position: relative;
 }
