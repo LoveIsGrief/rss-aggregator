@@ -16,8 +16,17 @@
     <title>Rss Aggregator</title>
 </head>
 <body ng-app="aggregatorApp">
-<div ng-controller="AggregatorController as aggregator">
-    <form>
+<div class="aggregator-controller"
+     ng-controller="AggregatorController as aggregator">
+    <form class="navbar-form navbar-left">
+        <div class="form-group">
+            <input
+                type="text"
+                class="form-control"
+                placeholder="Search"
+                ng-model="aggregator.searchTerm"
+            >
+        </div>
         <div class="checkbox">
             <label>
                 <input
@@ -39,16 +48,19 @@
             </label>
         </div>
     </form>
-    <item-detail
-        ng-repeat="item in aggregator.items
-        | filter:aggregator.hideItemFilter
-        | orderBy: 'datetime' : aggregator.newestToOldest
-        track by item.url"
-        item="item"
-        on-toggle-read="aggregator.toggleRead(item, read)"
-        data-hide="{{item.read && aggregator.hideRead}}"
-        ng-class-even="'bg-info'"
-        ng-class-odd="'bg-success'"
-    ></item-detail>
+    <div class="main">
+        <item-detail
+            ng-repeat="item in aggregator.items
+                        | filter:{title:aggregator.searchTerm}
+                        | filter:aggregator.hideItemFilter
+                        | orderBy: 'datetime' : aggregator.newestToOldest
+                        track by item.url"
+            item="item"
+            on-toggle-read="aggregator.toggleRead(item, read)"
+            data-hide="{{item.read && aggregator.hideRead}}"
+            ng-class-even="'bg-info'"
+            ng-class-odd="'bg-success'"
+        ></item-detail>
+    </div>
 </div>
 </body>
