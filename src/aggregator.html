@@ -47,6 +47,16 @@
                 Newest to oldest
             </label>
         </div>
+        <div class="checkbox" ng-hide="aggregator.clickToContainPort.error">
+            <label>
+                <input
+                    type="checkbox" id="openInRandomContainer"
+                    ng-checked="!aggregator.clickToContainPort.error && aggregator.openInRandomContainer"
+                    ng-model="aggregator.openInRandomContainer"
+                >
+                Open in random container
+            </label>
+        </div>
     </form>
     <div class="main">
         <item-detail
@@ -57,6 +67,7 @@
                         track by item.url"
             item="item"
             on-toggle-read="aggregator.toggleRead(item, read)"
+            on-item-clicked="aggregator.openItemLink(item)"
             data-hide="{{item.read && aggregator.hideRead}}"
             ng-class-even="'bg-info'"
             ng-class-odd="'bg-success'"
