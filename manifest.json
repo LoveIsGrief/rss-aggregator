@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "RSS-Aggregator",
-  "version": "0.0.5alpha",
+  "version": "0.0.6alpha",
   "description": "Aggregate RSS feeds from the bookmarks and display them on one page",
   "author": "LoveIsGrief",
   "applications": {

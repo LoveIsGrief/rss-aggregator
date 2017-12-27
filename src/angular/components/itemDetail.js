@@ -9,6 +9,7 @@ angular.module("aggregatorApp").component("itemDetail", {
     controller: ItemDetail,
     bindings: {
         item: "<",
-        onToggleRead: "&"
+        onToggleRead: "&",
+        onItemClicked: "&",
     }
 })

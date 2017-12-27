@@ -1,15 +1,16 @@
 const DB_KEY = "aggregated-rss";
 
-
 angular.module("aggregatorApp", []).controller("AggregatorController", [
     "$scope",
     function ($scope) {
         this.dbItems = {};
         this.items = [];
-        this.hideRead = false;
-        this.newestToOldest = false;
+        this.clickToContainPort = browser.runtime.connect("@click-to-contain");
 
-        ["hideRead", "newestToOldest"].forEach((booleanOption) => {
+        let booleanOptions = ["hideRead", "newestToOldest", "openInRandomContainer"];
+
+        booleanOptions.forEach((booleanOption) => {
+            this[booleanOption] = false;
             browser.storage.sync.get(booleanOption).then((res) => {
                 let booleanValue = res[booleanOption];
                 $scope.$apply(() => {
@@ -22,6 +23,11 @@ angular.module("aggregatorApp", []).controller("AggregatorController", [
                 })
             })
         });
+
+        // Force an update when we can't connect to the port
+        this.clickToContainPort.onDisconnect.addListener(() => {
+            $scope.$apply(() => {})
+        })
 
 
         setInterval(() => {
@@ -39,6 +45,20 @@ angular.module("aggregatorApp", []).controller("AggregatorController", [
         this.toggleRead = (item, read) => {
             item.read = read !== undefined ? read : !item.read;
             browser.storage.sync.set({[DB_KEY]: this.dbItems})
+        }
+
+        this.openItemLink = (item) => {
+            if (!this.clickToContainPort.error && this.openInRandomContainer) {
+                this.clickToContainPort.postMessage({
+                    command: "openTab",
+                    data: {
+                        url: item.url
+                    }
+                })
+            } else {
+                window.open(item.url)
+            }
+            this.toggleRead(item, true);
         }
 
         /**
