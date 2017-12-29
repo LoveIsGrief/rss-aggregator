@@ -30,16 +30,6 @@
         <div class="checkbox">
             <label>
                 <input
-                    type="checkbox" id="hideRead"
-                    ng-checked="aggregator.hideRead"
-                    ng-model="aggregator.hideRead"
-                >
-                Hide read
-            </label>
-        </div>
-        <div class="checkbox">
-            <label>
-                <input
                     type="checkbox" id="reverseSort"
                     ng-checked="aggregator.newestToOldest"
                     ng-model="aggregator.newestToOldest"
@@ -56,6 +46,39 @@
                 >
                 Open in random container
             </label>
+        </div>
+
+        <div class="form-group show-options">
+
+            <div class="radio">
+                <label>
+                    <input type="radio" name="optionsRadios" id="optShowAll"
+                           value="both"
+                           ng-model="aggregator.showOption"
+                    >
+                    Show all
+                </label>
+            </div>
+            <div class="radio">
+                <label>
+                    <input type="radio" name="optionsRadios"
+                           id="optShowUnreadOnly"
+                           value="unreadOnly"
+                           ng-model="aggregator.showOption"
+                    >
+                    Show unread only
+                </label>
+            </div>
+            <div class="radio">
+                <label>
+                    <input type="radio" name="optionsRadios"
+                           id="optShowReadOnly"
+                           value="readOnly"
+                           ng-model="aggregator.showOption"
+                    >
+                    Show read only
+                </label>
+            </div>
         </div>
     </form>
     <div class="main">

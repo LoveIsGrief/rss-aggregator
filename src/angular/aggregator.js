@@ -6,8 +6,9 @@ angular.module("aggregatorApp", []).controller("AggregatorController", [
         this.dbItems = {};
         this.items = [];
         this.clickToContainPort = browser.runtime.connect("@click-to-contain");
+        this.showOption = "both";
 
-        let booleanOptions = ["hideRead", "newestToOldest", "openInRandomContainer"];
+        let booleanOptions = ["newestToOldest", "openInRandomContainer"];
 
         booleanOptions.forEach((booleanOption) => {
             this[booleanOption] = false;
@@ -23,6 +24,16 @@ angular.module("aggregatorApp", []).controller("AggregatorController", [
                 })
             })
         });
+
+        // Update and register for changes to showOption
+        browser.storage.sync.get("showOption").then(({showOption}) => {
+            $scope.$apply(() => {
+                this.showOption = showOption || this.showOption
+            })
+        })
+        $scope.$watch(() => this.showOption, () => {
+            browser.storage.sync.set({showOption: this.showOption})
+        })
 
         // Force an update when we can't connect to the port
         this.clickToContainPort.onDisconnect.addListener(() => {
@@ -67,7 +78,16 @@ angular.module("aggregatorApp", []).controller("AggregatorController", [
          * @returns {boolean}
          */
         this.hideItemFilter = (item) => {
-            return !(this.hideRead && item.read)
+            switch(this.showOption){
+                case "both":
+                    return true
+                case "readOnly":
+                    return item.read
+                case "unreadOnly":
+                    return !item.read
+                default:
+                    return true
+            }
         }
     }
 ])
