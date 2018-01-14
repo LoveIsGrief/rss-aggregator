@@ -1,6 +1,12 @@
 function ItemDetail($scope, $element, $attrs) {
     this.getHost = (url) => {
-        return (new URL(url)).host
+        let host = "Unknown host";
+        try {
+            host = (new URL(url)).host
+        } catch (e) {
+            console.error(`Couldn't get host of ${url}`, e)
+        }
+        return host
     }
 }
 
