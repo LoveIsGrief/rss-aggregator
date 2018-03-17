@@ -169,8 +169,20 @@ function saveToDB(successes) {
 }
 
 browser.browserAction.onClicked.addListener(() => {
-    browser.tabs.create({
-        url: browser.extension.getURL("src/aggregator.html")
+    // Allowing only one tab
+    let url = browser.extension.getURL("src/aggregator.html");
+    browser.tabs.query({
+        url: `${url}*`
+    }).then((tabs) => {
+        if (tabs.length > 0) {
+            browser.tabs.update(tabs[0].id, {
+                active: true
+            });
+        } else {
+            browser.tabs.create({
+                url: url
+            })
+        }
     })
 })
 
