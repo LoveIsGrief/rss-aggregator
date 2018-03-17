@@ -1,6 +1,6 @@
 {
   "name": "rss-aggregator",
-  "version": "0.0.7alpha",
+  "version": "0.0.10alpha",
   "description": "Aggregate RSS feeds from the bookmarks and display them on one page",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,7 @@
   "author": "LoveIsGrief",
   "license": "ISC",
   "dependencies": {
-    "angular": "^1.6.7",
+    "angular": "^1.6.9",
     "rss-parser": "^2.11.0"
   },
   "devDependencies": {
