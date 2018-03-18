@@ -1,6 +1,13 @@
 const DB_KEY = "aggregated-rss";
 const AGGREGATE_INTERVAL = 60000;
 const CHECK_INTERVAL = 5000;
+/**
+ * Time in days after which an item is kept or even allowed into the DB.
+ * @type {number}
+ */
+const DEFAULT_EXPIRY_DAYS = 7;
+const EXPIRY_KEY = "expiry_days";
+const DAY_IN_MILLI = 86400000;
 
 /**
  * Checked URLs with when they were checked in unix timestamp milliseconds
@@ -114,28 +121,49 @@ function parseAllRSS(urls) {
 /**
  * @param {DbAggregation} old
  * @param {Successes} successes
+ * @param {Number} expiryDateMs
  */
-function mergeOldWithNewItems(old, successes) {
+function mergeOldWithNewItems(old, successes, expiryDateMs) {
+
     for (let rssUrl in successes) {
 
+        successes[rssUrl].feed.entries
         // Add only truly new items
         // No need to update the old ones (hence the filter)
-        for (let item of successes[rssUrl].feed.entries.filter(item => !old[item.link])) {
-            let time = Date.parse(item.isoDate || item.pubDate);
-            if (isNaN(time)) {
-                console.warn(`Couldn't parse time of item in the feed ${rssUrl}`, item)
-                continue
-            }
-            old[item.link] = {
-                title: item.title,
-                url: item.link,
-                description: item.description,
-                datetime: time,
-                feedUrl: rssUrl,
-                read: false,
-            }
-        }
+            .filter(item => !old[item.link])
+            // Only items with valid, fresh dates
+            .filter((item) => {
+                item.time = Date.parse(item.isoDate || item.pubDate);
+                return !isNaN(item.time) && item.time > expiryDateMs
+            })
+            .forEach((item) => {
+                old[item.link] = {
+                    title: item.title,
+                    url: item.link,
+                    description: item.description,
+                    datetime: item.time,
+                    feedUrl: rssUrl,
+                    read: false,
+                }
+
+            })
     }
+}
+
+/**
+ *
+ * @param db {DbFeedItem}
+ * @param expiryDateMs {Number}
+ */
+function cleanExistingItems(db, expiryDateMs) {
+    let cleaned = 0;
+    Object.keys(db).forEach((url) => {
+        if(db[url].datetime <= expiryDateMs){
+            delete db[url];
+            cleaned++;
+        }
+    })
+    console.info(`Cleaned ${cleaned} items`);
 }
 
 let savingToDB = null;
@@ -148,12 +176,21 @@ function saveToDB(successes) {
     if (savingToDB) {
         return
     }
-    browser.storage.sync.get(DB_KEY).then((aggregatedRSS) => {
+    Promise.all([
+        browser.storage.sync.get(EXPIRY_KEY),
+        browser.storage.sync.get(DB_KEY)
+    ]).then((values) => {
+        const expiryDays = values[0][EXPIRY_KEY] || DEFAULT_EXPIRY_DAYS;
+        const expiryDate = Date.now() - (expiryDays * DAY_IN_MILLI);
+
+        let aggregatedRSS = values[1];
         let toSave = aggregatedRSS[DB_KEY] || {};
-        let countOld = Object.keys(toSave).length;
-        mergeOldWithNewItems(toSave, successes);
-        let countNew = Object.keys(toSave).length;
-        let diff = countNew - countOld;
+        cleanExistingItems(toSave, expiryDate);
+        const countOld = Object.keys(toSave).length;
+        mergeOldWithNewItems(toSave, successes, expiryDate);
+
+        const countNew = Object.keys(toSave).length;
+        const diff = countNew - countOld;
         savingToDB = browser.storage.sync.set({[DB_KEY]: toSave}).then(() => {
             // For some reason this is called twice? on one set? bug or do I just program like shit?
             if (diff > 0) {
