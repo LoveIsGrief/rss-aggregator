@@ -163,7 +163,9 @@ function cleanExistingItems(db, expiryDateMs) {
             cleaned++;
         }
     })
-    console.info(`Cleaned ${cleaned} items`);
+    if(cleaned){
+        console.info(`Cleaned ${cleaned} items`);
+    }
 }
 
 let savingToDB = null;
