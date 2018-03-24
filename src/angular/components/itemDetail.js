@@ -4,7 +4,7 @@ function ItemDetail($scope, $element, $attrs) {
         try {
             host = (new URL(url)).host
         } catch (e) {
-            console.error(`Couldn't get host of ${url}`, e)
+            console.debug(`Couldn't get host of ${url}`, e)
         }
         return host
     }
@@ -16,6 +16,7 @@ angular.module("aggregatorApp").component("itemDetail", {
     bindings: {
         item: "<",
         onToggleRead: "&",
+        onToggleStarred: "&",
         onItemClicked: "&",
     }
 })
