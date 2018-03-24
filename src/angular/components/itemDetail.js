@@ -1,13 +1,4 @@
 function ItemDetail($scope, $element, $attrs) {
-    this.getHost = (url) => {
-        let host = "Unknown host";
-        try {
-            host = (new URL(url)).host
-        } catch (e) {
-            console.debug(`Couldn't get host of ${url}`, e)
-        }
-        return host
-    }
 }
 
 angular.module("aggregatorApp").component("itemDetail", {
