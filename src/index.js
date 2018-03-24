@@ -110,6 +110,8 @@ function parseAllRSS(urls) {
 /**
  * @typedef {Object} DbFeedItem
  * @property {Number} datetime - unix time of when the
+ * @property {String} url - the referenced article
+ * @property {String} host - the cached host of the url
  * @property {String} feedUrl - where this item was recovered from
  * @property {Boolean} read - whether the item was read by the user
  * @property {Boolean} starred - do we love this item and wanna keep it around?
@@ -118,6 +120,19 @@ function parseAllRSS(urls) {
 /**
  * @typedef {Object.<UrlString, DbFeedItem>} DbAggregation
  */
+
+/**
+ * Utility function
+ * @param url {String}
+ * @returns {String | null}
+ */
+function getHost(url) {
+    let host = null;
+    try {
+        host = (new URL(url)).host
+    } catch (e) {}
+    return host
+}
 
 /**
  * @param {DbAggregation} old
@@ -132,17 +147,25 @@ function mergeOldWithNewItems(old, successes, expiryDateMs) {
         // Add only truly new items
         // No need to update the old ones (hence the filter)
             .filter(item => !old[item.link])
+            // Remove urls with invalid hosts
+            .filter(item => {
+                if(!item.host){
+                    item.host = getHost(item.link)
+                }
+                return item.host
+            })
             // Only items with valid, fresh dates
             .filter((item) => {
-                item.time = Date.parse(item.isoDate || item.pubDate);
-                return !isNaN(item.time) && !shouldClean(item, expiryDateMs)
+                item.datetime = Date.parse(item.isoDate || item.pubDate);
+                return !isNaN(item.datetime) && !shouldClean(item, expiryDateMs)
             })
             .forEach((item) => {
                 old[item.link] = {
+                    host: item.host,
                     title: item.title,
                     url: item.link,
                     description: item.description,
-                    datetime: item.time,
+                    datetime: item.datetime,
                     feedUrl: rssUrl,
                     read: false,
                 }
@@ -157,8 +180,8 @@ function mergeOldWithNewItems(old, successes, expiryDateMs) {
  * @param expiryDateMs {Number}
  * @returns {boolean}
  */
-function shouldClean(item, expiryDateMs){
-    return !item.starred && item.datetime <= expiryDateMs
+function shouldClean(item, expiryDateMs) {
+    return !item.host || (!item.starred && item.datetime <= expiryDateMs)
 }
 
 /**
@@ -169,12 +192,12 @@ function shouldClean(item, expiryDateMs){
 function cleanExistingItems(db, expiryDateMs) {
     let cleaned = 0;
     Object.keys(db).forEach((url) => {
-        if(shouldClean(db[url], expiryDateMs)){
+        if (shouldClean(db[url], expiryDateMs)) {
             delete db[url];
             cleaned++;
         }
     })
-    if(cleaned){
+    if (cleaned) {
         console.info(`Cleaned ${cleaned} items`);
     }
 }

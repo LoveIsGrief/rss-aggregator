@@ -2,16 +2,10 @@
     class="panel panel-default item-detail"
 >
     <div class="panel-icon">
-        {{ $ctrl.getHost($ctrl.item.url)}}
+        {{ $ctrl.item.host }}
     </div>
 
     <div class="panel-body">
-        <a
-            href="#"
-            ng-click="$ctrl.onItemClicked({item: $ctrl.item})"
-        >
-            {{ $ctrl.item.title }}
-        </a>
         <span
             ng-class="{'badge': !$ctrl.item.read, 'badge read': $ctrl.item.read}"
         >
@@ -32,6 +26,12 @@
             >
             </span>
         </span>
+        <a
+            href="#"
+            ng-click="$ctrl.onItemClicked({item: $ctrl.item})"
+        >
+            {{ $ctrl.item.title }}
+        </a>
     </div>
     <div class="panel-footer">{{ $ctrl.item.datetime | date : 'medium'}}</div>
 </div>
