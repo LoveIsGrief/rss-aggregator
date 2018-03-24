@@ -53,6 +53,11 @@ angular.module("aggregatorApp", []).controller("AggregatorController", [
             })
         }, 500)
 
+        this.toggleStarred = (item, starred) => {
+            item.starred = starred !== undefined ? starred : !item.starred;
+            browser.storage.sync.set({[DB_KEY]: this.dbItems})
+        }
+
         this.toggleRead = (item, read) => {
             item.read = read !== undefined ? read : !item.read;
             browser.storage.sync.set({[DB_KEY]: this.dbItems})
@@ -83,6 +88,8 @@ angular.module("aggregatorApp", []).controller("AggregatorController", [
                     return true
                 case "readOnly":
                     return item.read
+                case "starredOnly":
+                    return item.starred
                 case "unreadOnly":
                     return !item.read
                 default:

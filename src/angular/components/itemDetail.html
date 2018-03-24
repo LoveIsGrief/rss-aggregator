@@ -22,6 +22,16 @@
             >
             </span>
         </span>
+        <span
+            ng-class="{'badge': !$ctrl.item.starred, 'badge starred': $ctrl.item.starred}"
+        >
+            <span
+                class="glyphicon glyphicon-star"
+                aria-hidden="true"
+                ng-click="$ctrl.onToggleStarred({item: $ctrl.item})"
+            >
+            </span>
+        </span>
     </div>
     <div class="panel-footer">{{ $ctrl.item.datetime | date : 'medium'}}</div>
 </div>

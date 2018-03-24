@@ -16,6 +16,7 @@ angular.module("aggregatorApp").component("itemDetail", {
     bindings: {
         item: "<",
         onToggleRead: "&",
+        onToggleStarred: "&",
         onItemClicked: "&",
     }
 })

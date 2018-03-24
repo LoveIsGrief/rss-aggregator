@@ -79,6 +79,16 @@
                     Show read only
                 </label>
             </div>
+            <div class="radio">
+                <label>
+                    <input type="radio" name="optionsRadios"
+                           id="optShowStarredOnly"
+                           value="starredOnly"
+                           ng-model="aggregator.showOption"
+                    >
+                    Show starred only
+                </label>
+            </div>
         </div>
     </form>
     <div class="main">
@@ -90,6 +100,7 @@
                         track by item.url"
             item="item"
             on-toggle-read="aggregator.toggleRead(item, read)"
+            on-toggle-starred="aggregator.toggleStarred(item, starred)"
             on-item-clicked="aggregator.openItemLink(item)"
             data-hide="{{item.read && aggregator.hideRead}}"
             ng-class-even="'bg-info'"

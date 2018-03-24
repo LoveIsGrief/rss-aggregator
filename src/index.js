@@ -112,6 +112,7 @@ function parseAllRSS(urls) {
  * @property {Number} datetime - unix time of when the
  * @property {String} feedUrl - where this item was recovered from
  * @property {Boolean} read - whether the item was read by the user
+ * @property {Boolean} starred - do we love this item and wanna keep it around?
  */
 
 /**
@@ -134,7 +135,7 @@ function mergeOldWithNewItems(old, successes, expiryDateMs) {
             // Only items with valid, fresh dates
             .filter((item) => {
                 item.time = Date.parse(item.isoDate || item.pubDate);
-                return !isNaN(item.time) && item.time > expiryDateMs
+                return !isNaN(item.time) && !shouldClean(item, expiryDateMs)
             })
             .forEach((item) => {
                 old[item.link] = {
@@ -151,6 +152,16 @@ function mergeOldWithNewItems(old, successes, expiryDateMs) {
 }
 
 /**
+ * Starred and unexpired items shouldn't be cleaned
+ * @param item {DbFeedItem}
+ * @param expiryDateMs {Number}
+ * @returns {boolean}
+ */
+function shouldClean(item, expiryDateMs){
+    return !item.starred && item.datetime <= expiryDateMs
+}
+
+/**
  *
  * @param db {DbFeedItem}
  * @param expiryDateMs {Number}
@@ -158,7 +169,7 @@ function mergeOldWithNewItems(old, successes, expiryDateMs) {
 function cleanExistingItems(db, expiryDateMs) {
     let cleaned = 0;
     Object.keys(db).forEach((url) => {
-        if(db[url].datetime <= expiryDateMs){
+        if(shouldClean(db[url], expiryDateMs)){
             delete db[url];
             cleaned++;
         }

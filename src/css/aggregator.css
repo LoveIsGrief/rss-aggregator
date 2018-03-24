@@ -55,6 +55,10 @@
     background-color: #178117;
 }
 
+.item-detail .panel-body .badge.starred {
+    background-color: gold;
+}
+
 [data-hide="true"] {
     display: none;
 }
