@@ -1,6 +1,6 @@
 {
   "name": "rss-aggregator",
-  "version": "0.0.10alpha",
+  "version": "0.1.0alpha",
   "description": "Aggregate RSS feeds from the bookmarks and display them on one page",
   "main": "index.js",
   "scripts": {
