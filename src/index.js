@@ -134,15 +134,15 @@ function mergeOldWithNewItems(old, successes, expiryDateMs) {
             .filter(item => !old[item.link])
             // Only items with valid, fresh dates
             .filter((item) => {
-                item.time = Date.parse(item.isoDate || item.pubDate);
-                return !isNaN(item.time) && !shouldClean(item, expiryDateMs)
+                item.datetime = Date.parse(item.isoDate || item.pubDate);
+                return !isNaN(item.datetime) && !shouldClean(item, expiryDateMs)
             })
             .forEach((item) => {
                 old[item.link] = {
                     title: item.title,
                     url: item.link,
                     description: item.description,
-                    datetime: item.time,
+                    datetime: item.datetime,
                     feedUrl: rssUrl,
                     read: false,
                 }
